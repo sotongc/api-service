@@ -1,13 +1,13 @@
 'use strict';
 
 import express from "express";
-
 import path from "path";
 
-import entry from "./entry.js";
-import docs from "./documents.js";
+//import routers
+import views from "./views/index.js";
+import users from "./users/index.js";
 
 export default app=>{
-	app.use('/views',entry);
-	app.use('/docs',docs);
+	app.use('/views',views);
+	app.use('/users',users);
 };

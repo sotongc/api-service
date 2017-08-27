@@ -1,7 +1,7 @@
 'use strict';
 
 import express from "express";
-import db from "./mongodb/db.js";
+//import db from "./mongodb/db.js";
 import config from "./config/default.js";
 import router from "./routes/index.js";
 

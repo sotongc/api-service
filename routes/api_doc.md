@@ -12,9 +12,10 @@
 ---
 
 1. login page;
-2. documents page;
-3. apis page;
-4. editor page [doc || api];
+2. user register;
+3. documents page;
+4. apis page;
+5. editor page [doc || api];
 
 ---
 
@@ -22,6 +23,13 @@
 > **Routes:** /views/login 
 
 *Route used for login page.*
+
+- Method: GET
+- Content-type: text/html
+
+> **Routes:** /views/register 
+
+*Route used for user register.*
 
 - Method: GET
 - Content-type: text/html
@@ -98,7 +106,7 @@
 
 > **Routes:** /users/register
 
-> **Routes:** /users/:uid/delete
+> **Routes:** /users/:uid/remove
 
 > **Routes:** /users/:uid/update
 
@@ -106,6 +114,11 @@
 
 --- 
 
-1. 
+1. edit document with whole api information in it;
+2. edit api in one document
 
 ---
+
+> **Routes:** /edit/doc/:did
+
+> **Routes:** /edit/api/:aid
