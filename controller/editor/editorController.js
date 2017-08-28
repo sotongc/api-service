@@ -19,7 +19,7 @@ class Editor{
 			console.error("Failed:Update document...\n",err);
 			res.send({
 				status:0,
-				message:"failed to update";
+				message:"failed to update"
 			});
 		}
 	}

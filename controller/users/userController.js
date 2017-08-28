@@ -4,7 +4,7 @@ import userModel from "../../models/users.js";
 
 class User{
 	constructor(){
-		["info","register","remove","update"].forEach((method)=>{
+		["info","register","remove","update","error"].forEach((method)=>{
 			this.__proto__[method]=this[method].bind(this);
 		});
 	}
@@ -17,11 +17,7 @@ class User{
 				content:info
 			});
 		}catch(err){
-			console.error("Failed: get user info...\n",err);
-			res.send({
-				status:0,
-				message:"failed get user info"
-			});
+			this.error(res,err);
 		}	
 	}
 	async register(req,res,next){
@@ -38,11 +34,7 @@ class User{
 				message:"register successfully"
 			});
 		}catch(err){
-			console.error("Failed:Register process...\n",err);
-			res.send({
-				status:0,
-				message:"Failed to register"
-			});
+			this.error(res,err);
 		}
 	}
 	async remove(req,res,next){
@@ -53,11 +45,7 @@ class User{
 				message:"successfully remove"
 			});
 		}catch(err){
-			console.error("Failed:Remove user...\n",err);
-			res.send({
-				status:0,
-				message:"Failed to remove"
-			});
+			this.error(res,err);
 		}
 	}
 	async update(req,res,next){
@@ -73,12 +61,15 @@ class User{
 				message:"update successfully"
 			});
 		}catch(err){
-			console.error("Failed:Update user...\n",err);
-			res.send({
-				status:0,
-				message:"Failed to update"
-			});
+			this.error(res,err);
 		}
+	}
+	error(res,err){
+		console.error("Failed:",err);
+		res.send({
+			status:0,
+			message:err.message
+		});
 	}
 }
 

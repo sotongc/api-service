@@ -17,7 +17,7 @@ class Document{
 			console.error("Failed:Hot docs...\n",err);
 			res.send({
 				status:0,
-				message:"failed to get hot document list";
+				message:"failed to get hot document list"
 			});
 		}
 	}
@@ -28,7 +28,7 @@ class Document{
 			console.error("Failed:Recent docs...\n",err);
 			res.send({
 				status:0,
-				message:"failed to get recent document list";
+				message:"failed to get recent document list"
 			});
 		}
 	}
@@ -39,7 +39,7 @@ class Document{
 			console.error("Failed:Contributed docs...\n",err);
 			res.send({
 				status:0,
-				message:"failed to get contributed document list";
+				message:"failed to get contributed document list"
 			});
 		}
 	}
@@ -80,7 +80,7 @@ class Document{
 			console.error("Failed:Create document...\n",err);
 			res.send({
 				status:0,
-				message:"failed to create document";
+				message:"failed to create document"
 			});
 		}
 	}
@@ -97,7 +97,7 @@ class Document{
 			console.error("Failed:remove document...\n",err);
 			res.send({
 				status:0,
-				message:"failed to remove document";
+				message:"failed to remove document"
 			});
 		}
 	}

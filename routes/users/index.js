@@ -7,7 +7,7 @@ const router=express.Router();
 
 router.get("/:uid/info",userController.info);
 router.post("/register",userController.register);
-router.update("/:uid/update",userController.update);
+router.post("/:uid/update",userController.update);
 router.delete("/:uid/remove",userController.remove);
 
 export default router;
