@@ -47,7 +47,7 @@ class User{
 	}
 	async remove(req,res,next){
 		try{
-			await userModel.findByIdRemove(req.params.uid);
+			await userModel.findByIdAndRemove(req.params.uid);
 			res.send({
 				status:1,
 				message:"successfully remove"
@@ -60,7 +60,26 @@ class User{
 			});
 		}
 	}
-	async update(req,res,next){}
+	async update(req,res,next){
+		try{
+			let updateItem={};
+			req.body.name && (updateItem.name=req.body.name);
+			req.body.portrait && (updateItem.portrait=req.body.portrait);
+
+			await userModel.updateOne({_id:req.params.uid},updateItem);
+
+			res.send({
+				status:1,
+				message:"update successfully"
+			});
+		}catch(err){
+			console.error("Failed:Update user...\n",err);
+			res.send({
+				status:0,
+				message:"Failed to update"
+			});
+		}
+	}
 }
 
 export default new User();
