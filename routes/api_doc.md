@@ -75,7 +75,7 @@
 
 > **Routes:** /docs/:uid/create
 
-> **Routes:** /docs/:uid/delete
+> **Routes:** /docs/:uid/remove/:did
 
 ## apis
 

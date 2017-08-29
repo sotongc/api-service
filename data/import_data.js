@@ -133,7 +133,7 @@ class Import{
 			user_list.push({
 				name:faker.internet.userName(),
 				join:new Date().getTime(),
-				portrait:faker.internet.avatar,
+				portrait:faker.internet.avatar(),
 				contributed:[]
 			});
 		}

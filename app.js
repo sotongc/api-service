@@ -1,12 +1,15 @@
 'use strict';
 
 import express from "express";
-//import db from "./mongodb/db.js";
+import db from "./mongodb/db.js";
 import config from "./config/default.js";
 import router from "./routes/index.js";
+import bodyParser from "body-parser";
 
 const app=express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended:true}));
 
 app.all('*',(req,res,next)=>{
 
