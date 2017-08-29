@@ -13,7 +13,7 @@ import edit from "./edit/index.js";
 export default app=>{
 	app.use('/views',views);
 	app.use('/users',users);
-	//app.use('/apis',apis);
-	//app.use('/docs',docs);
-	//app.use('/edit',edit);
+	app.use('/apis',apis);
+	app.use('/docs',docs);
+	app.use('/edit',edit);
 };

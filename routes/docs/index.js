@@ -6,9 +6,9 @@ import documentController from "../../controller/documents/documentController.js
 const router=express.Router();
 
 //get document list
-router.get("/hot",documentController.hot);
-router.get("/recent",documentController.recent);
-router.get("/:uid/contributed",documentController.contributed);
+router.post("/hot",documentController.hot);
+router.post("/recent",documentController.recent);
+router.post("/:uid/contributed",documentController.contributed);
 
 //modify document
 router.post("/:uid/create",documentController.create);

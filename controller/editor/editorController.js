@@ -4,23 +4,20 @@ import apiModel from "../../models/api.js";
 
 class Editor{
 	constructor(){
-		["document","api"].forEach((method)=>{
+		["document","api","build_struct","error"].forEach((method)=>{
 			this.__proto__[method]=this[method].bind(this);
 		});
 	}
 	async document(req,res,next){
 		try{
 			await apiModel.insertMany(req.body.docs);
+			console.log(req.body);
 			res.send({
 				status:1,
 				message:"Insert successfully"
-			})
-		}catch(err){
-			console.error("Failed:Update document...\n",err);
-			res.send({
-				status:0,
-				message:"failed to update"
 			});
+		}catch(err){
+			this.error(res,err);
 		}
 	}
 	async api(req,res,next){
@@ -31,15 +28,18 @@ class Editor{
 				message:"api update successfully"
 			});
 		}catch(err){
-			console.error("Failed:Update api...\n",err);
-			res.send({
-				status:0,
-				message:"failed to update api"
-			});
+			this.error(res,err);
 		}
 	}
 	build_struct(update){
 		return update;
+	}
+	error(res,err){
+		console.error("Failed:",err);
+		res.send({
+			status:0,
+			message:err.message
+		});
 	}
 }
 

@@ -69,6 +69,22 @@
 
 > **Routes:** /docs/hot
 
+*Get the hotest documents info*
+
+- Method: POST
+- Content-type: text/html
+- body: {
+	page:{
+		unit_num:<Number>,
+		page_num:<Number>
+	},
+	last:{
+		edit:<Number>,
+		id:<String>
+	}
+}
+
+
 > **Routes:** /docs/recent
 
 > **Routes:** /docs/:uid/contributed
@@ -89,6 +105,8 @@
 > **Routes:** /apis/:did/list
 
 > **Routes:** /apis/:aid/detail
+
+> **Routes** /apis/:aid/remove
 
 
 ## users
