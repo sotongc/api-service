@@ -10,8 +10,8 @@ const userSchema=new Schema({
 	portrait:String,
 	contributed:[
 		{
-			id:String,
-			type:String
+			type:Schema.Types.ObjectId,
+			ref:'Documents'
 		}
 	]
 });

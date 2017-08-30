@@ -7,13 +7,17 @@ const Schema=mongoose.Schema;
 const logSchema=new Schema({
 	time:Number,
 	producer:{
-		uid:String,
-		name:String
+		type:Schema.Types.ObjectId,
+		ref:'User'
 	},
+	action:String,//[create,modify,remove]
 	description:String,
 	target:{
-		id:String,
-		category:String
+		model:String,
+		item:{
+			type:Schema.Types.ObjectId,
+			refPath:'target.model'
+		}	
 	}
 });
 
