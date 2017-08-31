@@ -4,7 +4,7 @@ import apiModel from "../../models/api.js";
 
 class API{
 	constructor(){
-		["list","detail"].forEach((method)=>{
+		["list","detail","error"].forEach((method)=>{
 			this.__proto__[method]=this[method].bind(this);
 		});
 	}
@@ -17,14 +17,13 @@ class API{
 
 			res.json({
 				status:1,
-				message:"successfully"
+				message:"successfully",
+				content:{
+					list:list
+				}
 			});
 		}catch(err){
-			console.error("Failed:List apis...\n",err);
-			res.send({
-				status:0,
-				message:"failed to get the api list"
-			});
+			this.error(res,err);
 		}
 	}
 	async detail(req,res,next){
@@ -32,15 +31,21 @@ class API{
 			const detail=await apiModel.findById(req.params.aid);
 			res.json({
 				status:1,
-				message:"successfully"
+				message:"successfully",
+				content:{
+					detail:detail
+				}
 			});
 		}catch(err){
-			console.error("Failed:Get api detail...\n",err);
-			res.send({
-				status:0,
-				message:"failed to get detail api info"
-			});
+			this.error(res,err);
 		}
+	}
+	error(res,err){
+		console.error("Failed: ",err);
+		res.send({
+			status:0,
+			message:err.message
+		});
 	}
 }
 

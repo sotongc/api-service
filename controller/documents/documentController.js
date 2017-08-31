@@ -6,13 +6,28 @@ import userModel from "../../models/users.js";
 
 class Document{
 	constructor(){
-		["hot","recent","contributed","create","remove"].forEach((method)=>{
+		["hot","recent","contributed","create","remove","paginate"].forEach((method)=>{
 			this.__proto__[method]=this[method].bind(this);
 		});
 	}
 	async hot(req,res,next){
 		try{
+			const hot=await docModel.find(this.paginate(req.body.page,req.body.last,"statistics.edit",-1))
+				.limit(req.body.page.unit_num).sort({
+					"statistics.edit":-1
+			});
 
+			res.json({
+				status:1,
+				message:"get hot list successfully",
+				content:{
+					list:hot
+				},
+				page:{
+					unit_num:req.body.page.unit_num,
+					page_num:req.body.page.page_num
+				}
+			});
 		}catch(err){
 			console.error("Failed:Hot docs...\n",err);
 			res.send({
@@ -23,7 +38,22 @@ class Document{
 	}
 	async recent(req,res,next){
 		try{
+			const recent=await docModel.find(this.paginate(req.body.page,req.body.last,"last_modify.time",-1))
+				.limit(req.body.page.unit_num).sort({
+					"last_modify.time":-1
+			});
 
+			res.send({
+				status:1,
+				message:"success",
+				content:{
+					list:recent
+				}
+				page:{
+					unit_num:req.body.page.unit_num,
+					page_num:req.body.page.page_num
+				}
+			});
 		}catch(err){
 			console.error("Failed:Recent docs...\n",err);
 			res.send({
@@ -34,7 +64,23 @@ class Document{
 	}
 	async contributed(req,res,next){
 		try{
+			const contributed=await docModel.find({
+				"statistics.contributor"
+			}).limit(req.body.page.unit_num).sort({
+				_id:1
+			});
 
+			res.send({
+				status:1,
+				message:"success",
+				content:{
+					list:contributed
+				},
+				page:{
+					unit_num:req.body.page.unit_num,
+					page_num:req.body.page.page_num
+				}
+			});
 		}catch(err){
 			console.error("Failed:Contributed docs...\n",err);
 			res.send({
@@ -100,6 +146,26 @@ class Document{
 				message:"failed to remove document"
 			});
 		}
+	}
+	/**
+	 * #pagination#
+	 * @ params-page
+	 * @ params-last 
+	 */
+	paginate(page,last,sortby,order){
+		let chain=sortby.split(".");
+		let key=chain[chain.length-1];
+
+		if(page.page_num>1){
+			if(last[sortby]&&last.id){
+				return {
+					[sortby]:(order<0)?{$lte:last[key]}:{$gte:last[key]},
+					_id:{$ne:last.id}
+				};
+			}
+			throw new Error(`last id & ${key} must not be empty`);
+		}
+		return null;
 	}
 }
 

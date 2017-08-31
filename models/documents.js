@@ -23,14 +23,19 @@ const docSchema=new Schema({
 		edit:Number,
 		contributor:[
 			{
-				uid:String,
-				name:String
+				type:Schema.Types.ObjectId,
+				ref:'User'
 			}
 		]
 	},
-	log:[String]
+	log:[
+		{
+			type:Schema.Types.ObjectId,
+			ref:'Log'
+		}
+	]
 });
 
-const Documents=mongoose.model('Documents',docSchema);
+const Documents=mongoose.model('Document',docSchema);
 
 export default Documents;
