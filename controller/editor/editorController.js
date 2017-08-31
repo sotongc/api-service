@@ -11,7 +11,7 @@ class Editor{
 	async document(req,res,next){
 		try{
 			await apiModel.insertMany(req.body.docs);
-			console.log(req.body);
+
 			res.send({
 				status:1,
 				message:"Insert successfully"
