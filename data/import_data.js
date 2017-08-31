@@ -1,7 +1,7 @@
 'use strict';
 
 // Connect to mongodb
-//import db from "../mongodb/db.js";
+import db from "../mongodb/db.js";
 
 import mongoose from "mongoose";
 
@@ -28,17 +28,16 @@ class Creator{
 		this.uid=[];
 		this.did=[];
 	}
-	test(){	
-		console.log(new objectid()<new objectid())
-	}
 	/*save to db*/
-	async savedb(model,datalist,collection){
-		try{
-			await model.insertMany(datalist);
-			console.log(`Create ${collection} data success`);
-		}catch(err){
-			console.error(err);
-		}
+	savedb(tasks){
+		tasks.forEach(async function(task){
+			try{
+				await task.model.insertMany(task.datalist);
+				console.log(`Create ${task.collection} data success`);
+			}catch(err){
+				console.error(err);
+			}
+		});
 	}
 	/*creators*/
 	create(){
@@ -70,8 +69,8 @@ class Creator{
 					//1. create document & contributor info --done
 					contributor=Array.from(new Set([that.pickup(that.uid),that.pickup(that.uid)]));
 
-					let contributor_1=that.find(that.User,contributor[0]);
-					let contributor_2=that.find(that.User,contributor[contributor.length-1]);
+					let contributor_1=that.find(that.Users,contributor[0]);
+					let contributor_2=that.find(that.Users,contributor[contributor.length-1]);
 
 					that.Documents.push(schema.doc({
 						_id:did,
@@ -108,7 +107,7 @@ class Creator{
 					lid=new objectid();
 
 					doc=that.find(that.Documents,that.pickup(that.did));
-					contributor=that.find(that.User,that.pickup(that.uid));
+					contributor=that.find(that.Users,that.pickup(that.uid));
 
 					//1. create api 
 					that.Apis.push(schema.api({
@@ -128,12 +127,12 @@ class Creator{
 				}
 			},
 			log(lid,uid,model,item_id){
-				that.Log.push({
+				that.Log.push(schema.log({
 					_id:lid,
 					producer:uid,
 					model:model,
 					item:item_id
-				});
+				}));
 			}
 		};
 	}
@@ -205,12 +204,12 @@ class Creator{
 				return {
 					_id:o._id,
 					time:that.timestamp(),
-					producer:o.creator,
+					producer:o.producer,
 					description:faker.lorem.sentence(),
 					action:that.action(),
 					target:{
 						model:o.model,
-						item:""
+						item:o.item
 					}
 				};
 			}
@@ -227,13 +226,13 @@ class Creator{
 		return ["create","remove","modify"][Math.round(Math.random()*2)];
 	}
 	length(n){
-		return Math.round(Math.random()*n+Math.random()*9);
+		return Math.round(Math.random()*n+Math.random()*9)+Math.round(Math.random()*5)+3;
 	}
 	indicator(n){
-		return Math.round(Math.random()*n)-1;
+		return Math.round(Math.random()*n);
 	}
 	pickup(list){
-		return tar[this.indicator(list.length)];
+		return list[this.indicator(list.length-1)];
 	}
 	find(list,id){
 		let lo=0,
@@ -255,11 +254,52 @@ class Creator{
 		}
 		return null;
 	}
+	/*run*/
+	run(){
+		let generator=this.create();
+
+		// 1. generate users
+		generator.user();
+		console.log("Get users list success...");
+
+		//2. generate documents
+		generator.docs();
+		console.log("Get documents list success & record log info...");
+
+		//3. generate apis
+		generator.apis();
+		console.log("Get apis list success & record log info...");
+
+		//save the datalist to the database
+		this.savedb([
+			{
+				model:UserModel,
+				datalist:this.Users,
+				collection:"user"
+			},
+			{
+				model:DocModel,
+				datalist:this.Documents,
+				collection:"document"
+			},
+			{
+				model:ApiModel,
+				datalist:this.Apis,
+				collection:"api"
+			},
+			{
+				model:LogModel,
+				datalist:this.Log,
+				collection:"log"
+			}
+		]);
+
+	}
 }
 
 const creator=new Creator();
 
-creator.test();
+creator.run();
 
 
 
