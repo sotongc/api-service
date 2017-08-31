@@ -1,7 +1,11 @@
 'use strict';
 
 // Connect to mongodb
-import db from "../mongodb/db.js";
+//import db from "../mongodb/db.js";
+
+import mongoose from "mongoose";
+
+const objectid=mongoose.Types.ObjectId;
 
 // Import models
 import ApiModel from "../models/api.js";
@@ -13,139 +17,249 @@ import UserModel from "../models/users.js";
 import faker from "faker";
 faker.locale="en";
 
-class Import{
+class Creator{
 	constructor(){
+		this.Users=[];
+		this.Documents=[];
+		this.Apis=[];
+		this.Log=[];
 
+		/*ids*/
+		this.uid=[];
+		this.did=[];
 	}
-	//data importor
-	async importor(collection,model,datalist){
+	test(){	
+		console.log(new objectid()<new objectid())
+	}
+	/*save to db*/
+	async savedb(model,datalist,collection){
 		try{
 			await model.insertMany(datalist);
-			console.log(`Import ${collection} data successfully!`);
+			console.log(`Create ${collection} data success`);
 		}catch(err){
-			console.error(`Failed to import ${collection} collection`,err);
+			console.error(err);
 		}
 	}
-	//utils
-	ran_len(){
-		return Math.round(Math.random()*20)||1;
-	}
-	select(list,cap){
-		return list[Math.round(Math.random()*cap)];
-	}
-	generator(type){
-		if(type==="id"){
-			return faker.random.uuid().split("-").join("");
-		}
-	}
-	//data creator
-	api(){
-		let len=this.ran_len();
-		let api_list=[];
+	/*creators*/
+	create(){
+		let that=this;
+		let schema=that.schema();
+		return {
+			user(){
+				let num=that.length(20);
+				let uid="";			
 
-		for(let i=0;i<len;i++){
-			api_list.push({
-				path:faker.internet.url,
-				method:this.select(['get','post','put','delete','head','option','trace'],6),
-				description:faker.lorem.sentence(),
-				host:faker.random.number(),
-				docid:"",
-				category:"",
-				request:{
-					query:"?features=16&type=1",
-					header:{
-						"Content-type":"application/json"
-					},
-					body:"{a:1,b:2,c:3}"
-				},
-				response:{
-					mime:"application/json",
-					sample:"{a:1,b:2,c:3}",
-					error:{
-						code:"0",
-						message:"failed to get api list"
-					}
-				},
-				note:faker.lorem.sentence()
-			});
-		}
-		return api_list;
-	}
-	document(){
-		let len=this.ran_len();
-		let doc_list=[];
+				for(let i=0;i<num;i++){
+					uid=new objectid();
+					that.uid.push(uid);
 
-		for(let i=0;i<len;i++){
-			doc_list.push({
-				title:faker.lorem.text(),
-				description:faker.lorem.sentence(),
-				creation:{
-					user_id:"",
-					user_name:"",
-					time:new Date().getTime()
-				},
-				last_modify:{
-					user_id:"",
-					user_name:"",
-					time:new Date().getTime()
-				},
-				statistics:{
-					host:faker.random.number(),
-					api:faker.random.number(),
-					edit:faker.random.number(),
-					contributor:[
-						{
-							uid:this.generator("id"),
-							name:faker.internet.userName()
-						}
-					]
-				},
-				log:["a","b"]
-			});
-		}
-		return doc_list;
-	}
-	log(){
-		let len=this.ran_len();
-		let log_list=[];
-
-		for(let i=0;i<len;i++){
-			log_list.push({
-				time:new Date().getTime(),
-				producer:{
-					uid:this.generator("id"),
-					name:faker.internet.userName()
-				},
-				description:faker.lorem.sentence(),
-				target:{
-					id:this.generator("id"),
-					category:"api"
+					that.Users.push(schema.user({
+						_id:uid
+					}));
 				}
-			});
-		}
-		return log_list;
+			},
+			docs(){
+				let num=that.length(40);
+				let did="",lid="",contributor=[];
+
+				for(let i=0;i<num;i++){
+					did=new objectid();
+					lid=new objectid();
+					that.did.push(did);
+
+					//1. create document & contributor info --done
+					contributor=Array.from(new Set([that.pickup(that.uid),that.pickup(that.uid)]));
+
+					let contributor_1=that.find(that.User,contributor[0]);
+					let contributor_2=that.find(that.User,contributor[contributor.length-1]);
+
+					that.Documents.push(schema.doc({
+						_id:did,
+						creation:{
+							user_id:contributor[0],
+							user_name:contributor_1.name
+						},
+						last_modify:{
+							user_id:contributor[contributor.length-1],
+							user_name:contributor_2.name
+						}
+					}));
+
+					contributor.forEach(function(uid){
+						that.Documents[i].statistics.contributor.push(uid);
+					});	
+
+					//2. log record & record log in document;--done
+					this.log(lid,that.pickup(that.uid),'Document',did);
+					that.Documents[i].log.push(lid);
+					
+					//3. user contributed list add
+					contributor_1.contributed.push(did);
+					(contributor.length-1) && contributor_2.contributed.push(did);
+				}
+			},
+			apis(){
+				
+				let num=that.length(60);
+				let aid="",lid="",contributor=null,doc=null;
+
+				for(let i=0;i<num;i++){
+					aid=new objectid();
+					lid=new objectid();
+
+					doc=that.find(that.Documents,that.pickup(that.did));
+					contributor=that.find(that.User,that.pickup(that.uid));
+
+					//1. create api 
+					that.Apis.push(schema.api({
+						_id:aid,
+						docid:doc._id
+					}));
+
+					//2. log record 
+					this.log(lid,contributor._id,'Api',aid);
+					
+					//3. contributor info for document & record log in doc;
+					doc.statistics.contributor.push(contributor._id);
+					doc.log.push(lid);
+
+					//4. user contributed list add
+					contributor.contributed.push(doc._id);
+				}
+			},
+			log(lid,uid,model,item_id){
+				that.Log.push({
+					_id:lid,
+					producer:uid,
+					model:model,
+					item:item_id
+				});
+			}
+		};
 	}
-	user(){
-		let len=this.ran_len();
-		let user_list=[];
-
-		for(let i=0;i<len;i++){
-			user_list.push({
-				name:faker.internet.userName(),
-				join:new Date().getTime(),
-				portrait:faker.internet.avatar(),
-				contributed:[]
-			});
-		}
-		return user_list;
+	/*schema*/
+	schema(){
+		let that=this;
+		return {
+			user(o){
+				return {
+					_id:o._id,
+					name:faker.internet.userName(),
+					join:that.timestamp(),
+					portrait:faker.internet.avatar(),
+					contributed:[]
+				};
+			},
+			doc(o){
+				return {
+					_id:o._id,
+					title:faker.lorem.words(),
+					description:faker.lorem.sentence(),
+					creation:{
+						user_id:o.creation.user_id,
+						user_name:o.creation.user_name,
+						time:that.timestamp()
+					},
+					last_modify:{
+						user_id:o.last_modify.user_id,
+						user_name:o.last_modify.user_name,
+						time:that.timestamp()
+					},
+					statistics:{
+						host:faker.random.number(),
+						api:faker.random.number(),
+						edit:faker.random.number(),
+						contributor:[]
+					},
+					log:[]
+				}
+			},
+			api(o){
+				return {
+					_id:o._id,
+					path:faker.internet.url(),
+					method:that.method(),
+					description:faker.lorem.sentence(),
+					host:faker.internet.url(),
+					docid:o.docid,
+					category:faker.lorem.word(),
+					request:{
+						query:"",
+						header:{
+							"Content-type":"application/json"
+						},
+						body:""
+					},
+					response:{
+						mime:"application/json",
+						sample:"",
+						error:{
+							code:"",
+							message:""
+						}
+					},
+					note:""
+				};
+			},
+			log(o){
+				return {
+					_id:o._id,
+					time:that.timestamp(),
+					producer:o.creator,
+					description:faker.lorem.sentence(),
+					action:that.action(),
+					target:{
+						model:o.model,
+						item:""
+					}
+				};
+			}
+		};
 	}
-};
+	/*utils*/
+	timestamp(){
+		return (new Date().getTime()/1000-Math.round(3600*24*Math.random()*40))*1000;
+	}
+	method(){
+		return ["GET","POST","PUT","DELETE","OPTION","HEAD","TRACE"][Math.round(Math.random()*6)];
+	}
+	action(){
+		return ["create","remove","modify"][Math.round(Math.random()*2)];
+	}
+	length(n){
+		return Math.round(Math.random()*n+Math.random()*9);
+	}
+	indicator(n){
+		return Math.round(Math.random()*n)-1;
+	}
+	pickup(list){
+		return tar[this.indicator(list.length)];
+	}
+	find(list,id){
+		let lo=0,
+			hi=list.length-1,
+			mid=0;
 
-const creation=new Import();
+		while(lo<=hi){
+			mid=Math.floor((hi-lo)/2)+lo;
 
-creation.importor("User",UserModel,creation.user());
-creation.importor("Log",LogModel,creation.log());
-creation.importor("Document",DocModel,creation.document());
-creation.importor("API",ApiModel,creation.api());
+			if(id<list[mid]._id){
+				hi=mid-1;
+
+			}else if(id>list[mid]._id){
+				lo=mid+1;
+			}
+			else{
+				return list[mid];
+			}
+		}
+		return null;
+	}
+}
+
+const creator=new Creator();
+
+creator.test();
+
 
 

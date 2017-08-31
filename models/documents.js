@@ -36,6 +36,6 @@ const docSchema=new Schema({
 	]
 });
 
-const Documents=mongoose.model('Documents',docSchema);
+const Documents=mongoose.model('Document',docSchema);
 
 export default Documents;
