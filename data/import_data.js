@@ -300,6 +300,3 @@ class Creator{
 const creator=new Creator();
 
 creator.run();
-
-
-

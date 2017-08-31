@@ -17,6 +17,8 @@ class Document{
 					"statistics.edit":-1
 			});
 
+			const total=await docModel.count();
+
 			res.json({
 				status:1,
 				message:"get hot list successfully",
@@ -25,7 +27,8 @@ class Document{
 				},
 				page:{
 					unit_num:req.body.page.unit_num,
-					page_num:req.body.page.page_num
+					page_num:req.body.page.page_num,
+					total_num:total
 				}
 			});
 		}catch(err){
@@ -43,15 +46,18 @@ class Document{
 					"last_modify.time":-1
 			});
 
+			const total=await docModel.count();
+
 			res.send({
 				status:1,
 				message:"success",
 				content:{
 					list:recent
-				}
+				},
 				page:{
 					unit_num:req.body.page.unit_num,
-					page_num:req.body.page.page_num
+					page_num:req.body.page.page_num,
+					total_num:total
 				}
 			});
 		}catch(err){
@@ -64,10 +70,20 @@ class Document{
 	}
 	async contributed(req,res,next){
 		try{
-			const contributed=await docModel.find({
-				"statistics.contributor"
-			}).limit(req.body.page.unit_num).sort({
-				_id:1
+			const contributed=await userModel.findById(req.params.uid)
+				.populate({
+					path:'contributed',
+					match:{'last_modify.time':{$lte:req.body.last.time||new Date().getTime()}},
+					options:{
+						limit:req.body.page.unit_num,
+						sort:{
+							"last_modify.time":-1
+						}
+					}
+				});
+
+			const total=await userModel.findById(req.params.uid).select({
+				contributed:1
 			});
 
 			res.send({
@@ -78,7 +94,8 @@ class Document{
 				},
 				page:{
 					unit_num:req.body.page.unit_num,
-					page_num:req.body.page.page_num
+					page_num:req.body.page.page_num,
+					total_num:total.contributed.length
 				}
 			});
 		}catch(err){

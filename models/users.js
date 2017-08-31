@@ -11,7 +11,7 @@ const userSchema=new Schema({
 	contributed:[
 		{
 			type:Schema.Types.ObjectId,
-			ref:'Documents'
+			ref:'Document'
 		}
 	]
 });
