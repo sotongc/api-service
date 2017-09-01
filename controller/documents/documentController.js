@@ -4,6 +4,8 @@ import docModel from "../../models/documents.js";
 import apiModel from "../../models/api.js";
 import userModel from "../../models/users.js";
 
+import mongoose from "mongoose";
+
 class Document{
 	constructor(){
 		["hot","recent","contributed","create","remove","paginate"].forEach((method)=>{
@@ -108,8 +110,10 @@ class Document{
 	}
 	async create(req,res,next){
 		try{
+			req.locals.docid=mongoose.Types.ObjectId;
 			const user=await userModel.findById(req.params.uid).select({name:1});
 			await docModel.create({
+				_id:req.locals.docid,
 				title:req.body.title,
 				description:req.body.description,
 				creation:{
@@ -135,10 +139,7 @@ class Document{
 				}
 			});
 
-			res.send({
-				status:1,
-				message:"create successfully"
-			});
+			next();
 		}catch(err){
 			console.error("Failed:Create document...\n",err);
 			res.send({
@@ -152,10 +153,7 @@ class Document{
 			await docModel.findByIdAndRemove(req.params.did);
 			await apiModel.remove({docid:req.params.did});
 
-			res.send({
-				status:1,
-				message:"remove successfully"
-			});
+			next();
 		}catch(err){
 			console.error("Failed:remove document...\n",err);
 			res.send({

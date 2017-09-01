@@ -106,7 +106,7 @@
 
 > **Routes:** /apis/:aid/detail
 
-> **Routes** /apis/:aid/remove
+> **Routes** /apis/:uid/remove/:aid
 
 
 ## users
@@ -124,9 +124,9 @@
 
 > **Routes:** /users/register
 
-> **Routes:** /users/:uid/remove
+> **Routes:** /users/remove/:uid
 
-> **Routes:** /users/:uid/update
+> **Routes:** /users/update/:uid
 
 ## edit 
 
@@ -137,6 +137,30 @@
 
 ---
 
-> **Routes:** /edit/doc/:did
+> **Routes:** /edit/:uid/doc/:did
 
-> **Routes:** /edit/api/:aid
+> **Routes:** /edit/:uid/api/:aid
+
+## middleware
+
+---
+
+1. create log (related to [document | api] and user collection);
+2. record to document id to user contributed list;
+3. record target user to document contributor lsit;
+
+>**Note:** 
+- If the target is an api, log should record api id, however in User entity doc id should be used and contributor info should also be record to which document the target api belongs to;
+- If the user already have contribution to the document, then step 2 and 3 should be ignore;
+
+---
+
+> **Routes:** /edit/:uid/doc/:did
+
+> **Routes:** /edit/:uid/api/:aid
+
+> **Routes** /apis/:uid/remove/:aid
+
+> **Routes:** /docs/:uid/create
+
+> **Routes:** /docs/:uid/remove/:did

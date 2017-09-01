@@ -2,10 +2,16 @@
 
 import express from "express";
 import editorController from "../../controller/editor/editorController.js";
+import log from "../../middlewares/log.js";
 
 const router=express.Router();
 
-router.post("/doc/:did",editorController.document);
-router.post("/api/:aid",editorController.api);
+//routers
+router.post("/:uid/doc/:did",editorController.document);
+router.post("/:uid/api/:aid",editorController.api);
+
+//middleware
+router.post("/:uid/doc/:did",log.record_log);
+router.post("/:uid/api/:aid",log.record_log);
 
 export default router;
