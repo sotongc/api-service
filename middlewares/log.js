@@ -18,7 +18,9 @@ class Log{
 			"docs_handler",
 			"log_schema",
 			"error",
-			"success"
+			"success",
+			"get_doc_id",
+			"exist"
 		].forEach((method)=>{
 			this.__proto__[method]=this[method].bind(this);
 		});
@@ -26,13 +28,44 @@ class Log{
 	record_log(req,res,next){
 		this[`${req.baseUrl.replace(/^\/\b/,"")}_handler`](req,res);
 	}
+	// step 2: record contributed list
 	async record_contributed(req,res,next){
+		const did=this.get_doc_id(req);
 
+		try{
+			const user=await userModel.findById(req.params.uid).select({contributed:1});
+			
+			if(!this.exist(user.contributed,did)){
+				user.contributed.push(did);
+				user.markModified("contributed");
+				await user.save();
+			}
+
+			next();
+		}catch(err){
+			this.error(err,res);
+		}
 	}
+	// step 3: record contributor list
 	async record_contributor(req,res,next){
+		const did=this.get_doc_id(req);
 
+		try{
+			const doc=await docModel.findById(did).select({"statistics.contributor":1});
+
+			if(!this.exist(doc.statistics.contributor,req.params.uid)){
+				doc.statistics.contributor.push(req.params.uid);
+				doc.markModified("statistics.contributor");
+				await doc.save();
+			}
+
+			this.success(res);
+		}catch(err){
+			this.error(err,res);
+		}
 	}
-	edit_handler(req){
+	// step 1: record log info
+	async edit_handler(req){
 		let model=req.path.split("/")[2];
 		let iid=req.params.did||req.params.aid||"";
 
@@ -95,6 +128,17 @@ class Log{
 			status:1,
 			message:"success"
 		});
+	}
+	async get_doc_id(req){
+		if(req.params.aid){
+			const api=await apiModel.findById(req.params.aid).select({docid:1});
+			return api.docid;
+		}else{
+			return req.params.did || req.locals.params.docid;
+		}
+	}
+	exist(list,id){
+		return Boolean(list.lastIndexOf(id)+1);
 	}
 }
 
