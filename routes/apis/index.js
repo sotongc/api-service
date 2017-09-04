@@ -13,5 +13,7 @@ router.delete("/:uid/remove/:aid",apiController.remove);
 
 //middleware
 router.delete("/:uid/remove/:aid",log.record_log);
+router.delete("/:uid/remove/:aid",log.record_contributed);
+router.delete("/:uid/remove/:aid",log.record_contributor);
 
 export default router;

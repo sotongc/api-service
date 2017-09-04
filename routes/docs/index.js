@@ -17,6 +17,11 @@ router.delete("/:uid/remove/:did",documentController.remove);
 
 //middleware
 router.post("/:uid/create",log.record_log);
+router.post("/:uid/create",log.record_contributed);
+router.post("/:uid/create",log.record_contributor);
+
 router.delete("/:uid/remove/:did",log.record_log);
+router.delete("/:uid/remove/:did",log.record_contributed);
+router.delete("/:uid/remove/:did",log.record_contributor);
 
 export default router;
