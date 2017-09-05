@@ -11,11 +11,7 @@ class Editor{
 	async document(req,res,next){
 		try{
 			await apiModel.insertMany(req.body.docs);
-
-			res.send({
-				status:1,
-				message:"Insert successfully"
-			});
+			next();
 		}catch(err){
 			this.error(res,err);
 		}
@@ -23,10 +19,7 @@ class Editor{
 	async api(req,res,next){
 		try{
 			await apiModel.findByIdAndUpdate(req.params.aid,this.build_struct(req.body));
-			res.json({
-				status:1,
-				message:"api update successfully"
-			});
+			next();
 		}catch(err){
 			this.error(res,err);
 		}

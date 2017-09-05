@@ -4,7 +4,7 @@ import apiModel from "../../models/api.js";
 
 class API{
 	constructor(){
-		["list","detail","error"].forEach((method)=>{
+		["list","detail","remove","error"].forEach((method)=>{
 			this.__proto__[method]=this[method].bind(this);
 		});
 	}
@@ -36,6 +36,14 @@ class API{
 					detail:detail
 				}
 			});
+		}catch(err){
+			this.error(res,err);
+		}
+	}
+	async remove(req,res,next){
+		try{
+			await apiModel.findByIdAndRemove(req.params.aid);
+			next();
 		}catch(err){
 			this.error(res,err);
 		}
