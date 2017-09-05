@@ -144,6 +144,8 @@ class Creator{
 				return {
 					_id:o._id,
 					name:faker.internet.userName(),
+					password:"123456",
+					salt:"654321",
 					join:that.timestamp(),
 					portrait:faker.internet.avatar(),
 					contributed:[]

@@ -6,6 +6,7 @@ const Schema=mongoose.Schema;
 
 const userSchema=new Schema({
 	name:String,
+	password:String,
 	join:Number,
 	portrait:String,
 	contributed:[

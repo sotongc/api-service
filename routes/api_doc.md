@@ -124,6 +124,10 @@
 
 > **Routes:** /users/register
 
+> **Routes:** /users/login
+
+> **Routes:** /users/signout
+
 > **Routes:** /users/remove/:uid
 
 > **Routes:** /users/update/:uid
