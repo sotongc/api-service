@@ -8,7 +8,7 @@ class User{
 	constructor(){
 		[
 			"info","register","login","signout",
-			"remove","update",
+			"remove","update_portrait",
 			"error","encryption",
 			"Md5","random_text"
 		].forEach((method)=>{
@@ -96,8 +96,12 @@ class User{
 		};
 		// 2. username & password validation
 		try {
-			!new_user.name && throw new Error("user name cannot leave empty!");
-			!new_user.password && throw new Error("password cannot leave empty!");
+			if(!new_user.name){
+				throw new Error("user name cannot leave empty!");
+			}
+			if(!new_user.password){
+				throw new Error("password cannot leave empty!");
+			}
 		}catch(err){
 			res.send({
 				status:0,
