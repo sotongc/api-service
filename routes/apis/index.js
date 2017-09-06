@@ -3,8 +3,12 @@
 import express from "express";
 import apiController from "../../controller/apis/apiController";
 import log from "../../middlewares/log.js";
+import admin from "../../middlewares/admin.js";
 
 const router=express.Router();
+
+//admin middleware
+router.delete("/:uid/remove/:aid",admin.checkAdmin);
 
 //routers
 router.get("/:did/list",apiController.list);

@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 class User{
 	constructor(){
 		[
-			"info","register","login",
+			"info","register","login","signout",
 			"remove","update",
 			"error","encryption",
 			"Md5","random_text"
@@ -58,7 +58,18 @@ class User{
 		}		
 	}
 	async signout(req,res,next){
-		
+		try{
+			delete req.session.uid;
+			res.send({
+				status:1,
+				message:"signout success"
+			});
+		}catch(err){
+			res.send({
+				status:0,
+				message:"signout failed"
+			});
+		}
 	}
 	async info(req,res,next){
 		try{
