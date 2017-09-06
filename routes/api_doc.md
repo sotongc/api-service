@@ -89,9 +89,9 @@
 
 > **Routes:** /docs/:uid/contributed
 
-> **Routes:** /docs/:uid/create
+> **Routes:** /docs/:uid/create && need check session
 
-> **Routes:** /docs/:uid/remove/:did
+> **Routes:** /docs/:uid/remove/:did && need check session
 
 ## apis
 
@@ -106,7 +106,7 @@
 
 > **Routes:** /apis/:aid/detail
 
-> **Routes** /apis/:uid/remove/:aid
+> **Routes** /apis/:uid/remove/:aid && need check session
 
 
 ## users
@@ -120,7 +120,7 @@
 
 ---
 
-> **Routes:** /users/:uid/info
+> **Routes:** /users/:uid/info && need check session
 
 > **Routes:** /users/register
 
@@ -130,7 +130,7 @@
 
 > **Routes:** /users/remove/:uid
 
-> **Routes:** /users/update/:uid
+> **Routes:** /users/update/:uid && need check session
 
 ## edit 
 
@@ -141,9 +141,9 @@
 
 ---
 
-> **Routes:** /edit/:uid/doc/:did
+> **Routes:** /edit/:uid/doc/:did && need check session
 
-> **Routes:** /edit/:uid/api/:aid
+> **Routes:** /edit/:uid/api/:aid && need check session
 
 ## middleware
 

@@ -21,7 +21,6 @@ class User{
 			name:req.body.name,
 			password:req.body.password
 		};
-
 		// 2. if user not exist
 		try{
 			const user=await userModel.findOne({name:usr.name});
@@ -58,6 +57,9 @@ class User{
 			});
 		}		
 	}
+	async signout(req,res,next){
+		
+	}
 	async info(req,res,next){
 		try{
 			const info=await userModel.findById(req.params.uid);
@@ -91,7 +93,6 @@ class User{
 				message:err.message
 			});
 		}
-
 		// 3. judge if username already exist
 		try {
 			const user=await userModel.findOne({name:new_user.name});
@@ -140,7 +141,6 @@ class User{
 	}
 	async update_portrait(req,res,next){ //mark something wrong here
 		try{
-
 			await userModel.findByIdAndUpdate(req.params.uid,{
 				$set:{portrait:req.body.portrait}
 			});
