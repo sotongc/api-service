@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 class User{
 	constructor(){
 		[
-			"info","register","login",
+			"info","register","login","signout",
 			"remove","update",
 			"error","encryption",
 			"Md5","random_text"
@@ -21,7 +21,6 @@ class User{
 			name:req.body.name,
 			password:req.body.password
 		};
-
 		// 2. if user not exist
 		try{
 			const user=await userModel.findOne({name:usr.name});
@@ -58,6 +57,20 @@ class User{
 			});
 		}		
 	}
+	async signout(req,res,next){
+		try{
+			delete req.session.uid;
+			res.send({
+				status:1,
+				message:"signout success"
+			});
+		}catch(err){
+			res.send({
+				status:0,
+				message:"signout failed"
+			});
+		}
+	}
 	async info(req,res,next){
 		try{
 			const info=await userModel.findById(req.params.uid);
@@ -91,7 +104,6 @@ class User{
 				message:err.message
 			});
 		}
-
 		// 3. judge if username already exist
 		try {
 			const user=await userModel.findOne({name:new_user.name});
@@ -140,7 +152,6 @@ class User{
 	}
 	async update_portrait(req,res,next){ //mark something wrong here
 		try{
-
 			await userModel.findByIdAndUpdate(req.params.uid,{
 				$set:{portrait:req.body.portrait}
 			});

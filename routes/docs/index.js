@@ -3,6 +3,7 @@
 import express from "express";
 import documentController from "../../controller/documents/documentController.js";
 import log from "../../middlewares/log.js";
+import admin from "../../middlewares/admin.js";
 
 const router=express.Router();
 
@@ -10,6 +11,10 @@ const router=express.Router();
 router.post("/hot",documentController.hot);
 router.post("/recent",documentController.recent);
 router.post("/:uid/contributed",documentController.contributed);
+
+//admin middleware
+router.post("/:uid/create",admin.checkAdmin);
+router.delete("/:uid/remove/:did",admin.checkAdmin);
 
 //modify document
 router.post("/:uid/create",documentController.create);
